@@ -1,17 +1,30 @@
-import { getTestConfig } from '@/config/tests';
+import { careerPowerTest } from '@/config/tests/career-power';
+import { careerPowerEnTest } from '@/config/tests/career-power-en';
+import { spendingDnaTest } from '@/config/tests/spending-dna';
 import { TestRunner } from '@/components/engine/TestRunner';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { Sparkles, ArrowLeft } from 'lucide-react';
+import { TestConfig } from '@/types/test';
 
 export default async function LocalizedTestPage({
   params,
 }: {
   params: Promise<{ lang: string; slug: string }>;
 }) {
-  const { lang, slug } = await params;
-  const currentLang = (lang === 'en' ? 'en' : 'ko') as 'ko' | 'en';
-  const config = getTestConfig(slug, currentLang);
+  const resolved = await params;
+  const lang = resolved.lang === 'en' ? 'en' : 'ko';
+  const slug = resolved.slug;
+  const isEn = lang === 'en';
+
+  let config: TestConfig | undefined;
+
+  if (slug === 'career-power') {
+    config = isEn ? careerPowerEnTest : careerPowerTest;
+  } else if (slug === 'spending-dna') {
+    config = spendingDnaTest;
+  }
+
   if (!config) return notFound();
 
   return (
@@ -19,15 +32,15 @@ export default async function LocalizedTestPage({
       <div>
         <header className="border-b border-slate-900 sticky top-0 bg-slate-950/80 backdrop-blur-md z-50">
           <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
-            <Link href={`/${currentLang}`} className="flex items-center gap-2 font-black text-xl tracking-tight text-indigo-400">
+            <Link href={`/${lang}`} className="flex items-center gap-2 font-black text-xl tracking-tight text-indigo-400">
               <Sparkles className="w-5 h-5" />
               <span>TheEveryTest</span>
             </Link>
             <Link
-              href={`/${currentLang}`}
+              href={`/${lang}`}
               className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition"
             >
-              <ArrowLeft size={14} /> {currentLang === 'en' ? 'Home' : '홈으로'}
+              <ArrowLeft size={14} /> {isEn ? 'Home' : '홈으로'}
             </Link>
           </div>
         </header>
@@ -45,7 +58,7 @@ export default async function LocalizedTestPage({
             </p>
           </div>
 
-          <TestRunner config={config} lang={currentLang} />
+          <TestRunner config={config} lang={lang} />
         </div>
       </div>
 
@@ -53,11 +66,11 @@ export default async function LocalizedTestPage({
         <div className="max-w-4xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p>© 2026 TheEveryTest. All rights reserved.</p>
           <div className="flex gap-4 text-slate-500">
-            <Link href={`/${currentLang}/privacy`} className="hover:text-slate-300 transition">
-              {currentLang === 'en' ? 'Privacy Policy' : '개인정보처리방침'}
+            <Link href={`/${lang}/privacy`} className="hover:text-slate-300 transition">
+              {isEn ? 'Privacy Policy' : '개인정보처리방침'}
             </Link>
-            <Link href={`/${currentLang}/terms`} className="hover:text-slate-300 transition">
-              {currentLang === 'en' ? 'Terms of Service' : '이용약관'}
+            <Link href={`/${lang}/terms`} className="hover:text-slate-300 transition">
+              {isEn ? 'Terms of Service' : '이용약관'}
             </Link>
           </div>
         </div>
