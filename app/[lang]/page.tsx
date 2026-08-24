@@ -70,7 +70,7 @@ export default async function LangPage({ params }: { params: Promise<{ lang: str
             {tests.map((test) => (
               <Link
                 key={test.slug}
-                href={`/tests/${test.slug}`}
+                href={`/${lang}/tests/${test.slug}`}
                 className="group relative bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-indigo-500/50 rounded-3xl p-6 transition-all duration-200 hover:-translate-y-1 hover:shadow-xl hover:shadow-indigo-500/5 flex flex-col justify-between"
               >
                 <div>
@@ -109,10 +109,10 @@ export default async function LangPage({ params }: { params: Promise<{ lang: str
         <div className="max-w-4xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p>© 2026 TheEveryTest. All rights reserved.</p>
           <div className="flex gap-4 text-slate-500">
-            <Link href="/privacy" className="hover:text-slate-300 transition">
+            <Link href={`/${lang}/privacy`} className="hover:text-slate-300 transition">
               {lang === 'en' ? 'Privacy Policy' : '개인정보처리방침'}
             </Link>
-            <Link href="/terms" className="hover:text-slate-300 transition">
+            <Link href={`/${lang}/terms`} className="hover:text-slate-300 transition">
               {lang === 'en' ? 'Terms of Service' : '이용약관'}
             </Link>
           </div>
