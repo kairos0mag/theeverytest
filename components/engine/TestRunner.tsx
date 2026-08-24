@@ -4,7 +4,13 @@ import { useState } from 'react';
 import { TestConfig, Option } from '@/types/test';
 import { ResultCard } from './ResultCard';
 
-export function TestRunner({ config }: { config: TestConfig }) {
+export function TestRunner({
+  config,
+  lang = 'ko',
+}: {
+  config: TestConfig;
+  lang?: 'ko' | 'en';
+}) {
   const [currentStep, setCurrentStep] = useState(0);
   const [scores, setScores] = useState<Record<string, number>>({});
   const [resultCode, setResultCode] = useState<string | null>(null);
@@ -19,7 +25,6 @@ export function TestRunner({ config }: { config: TestConfig }) {
     if (currentStep + 1 < config.questions.length) {
       setCurrentStep(currentStep + 1);
     } else {
-      // 최빈값(가장 점수가 높은 태그)으로 결과 계산
       const finalCode = Object.keys(nextScores).reduce((a, b) =>
         nextScores[a] >= nextScores[b] ? a : b
       );
@@ -28,7 +33,7 @@ export function TestRunner({ config }: { config: TestConfig }) {
   };
 
   if (resultCode && config.results[resultCode]) {
-    return <ResultCard result={config.results[resultCode]} testSlug={config.slug} />;
+    return <ResultCard result={config.results[resultCode]} testSlug={config.slug} lang={lang} />;
   }
 
   const q = config.questions[currentStep];

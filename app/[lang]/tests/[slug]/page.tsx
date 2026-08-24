@@ -10,25 +10,24 @@ export default async function LocalizedTestPage({
   params: Promise<{ lang: string; slug: string }>;
 }) {
   const { lang, slug } = await params;
-  const isEn = lang === 'en';
-  const config = getTestConfig(slug, isEn ? 'en' : 'ko');
+  const currentLang = (lang === 'en' ? 'en' : 'ko') as 'ko' | 'en';
+  const config = getTestConfig(slug, currentLang);
   if (!config) return notFound();
 
   return (
     <main className="min-h-screen bg-slate-950 text-white selection:bg-indigo-500 flex flex-col justify-between">
       <div>
-        {/* 헤더 */}
         <header className="border-b border-slate-900 sticky top-0 bg-slate-950/80 backdrop-blur-md z-50">
           <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
-            <Link href={`/${lang}`} className="flex items-center gap-2 font-black text-xl tracking-tight text-indigo-400">
+            <Link href={`/${currentLang}`} className="flex items-center gap-2 font-black text-xl tracking-tight text-indigo-400">
               <Sparkles className="w-5 h-5" />
               <span>TheEveryTest</span>
             </Link>
             <Link
-              href={`/${lang}`}
+              href={`/${currentLang}`}
               className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition"
             >
-              <ArrowLeft size={14} /> {isEn ? 'Home' : '홈으로'}
+              <ArrowLeft size={14} /> {currentLang === 'en' ? 'Home' : '홈으로'}
             </Link>
           </div>
         </header>
@@ -46,7 +45,7 @@ export default async function LocalizedTestPage({
             </p>
           </div>
 
-          <TestRunner config={config} />
+          <TestRunner config={config} lang={currentLang} />
         </div>
       </div>
 
@@ -54,11 +53,11 @@ export default async function LocalizedTestPage({
         <div className="max-w-4xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p>© 2026 TheEveryTest. All rights reserved.</p>
           <div className="flex gap-4 text-slate-500">
-            <Link href={`/${lang}/privacy`} className="hover:text-slate-300 transition">
-              {isEn ? 'Privacy Policy' : '개인정보처리방침'}
+            <Link href={`/${currentLang}/privacy`} className="hover:text-slate-300 transition">
+              {currentLang === 'en' ? 'Privacy Policy' : '개인정보처리방침'}
             </Link>
-            <Link href={`/${lang}/terms`} className="hover:text-slate-300 transition">
-              {isEn ? 'Terms of Service' : '이용약관'}
+            <Link href={`/${currentLang}/terms`} className="hover:text-slate-300 transition">
+              {currentLang === 'en' ? 'Terms of Service' : '이용약관'}
             </Link>
           </div>
         </div>
