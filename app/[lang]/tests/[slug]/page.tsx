@@ -1,31 +1,25 @@
 import { careerPowerTest } from '@/config/tests/career-power';
 import { careerPowerEnTest } from '@/config/tests/career-power-en';
-import { spendingDnaTest } from '@/config/tests/spending-dna';
 import { TestRunner } from '@/components/engine/TestRunner';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { Sparkles, ArrowLeft } from 'lucide-react';
-import { TestConfig } from '@/types/test';
+
+export const dynamic = 'force-dynamic';
 
 export default async function LocalizedTestPage({
   params,
 }: {
   params: Promise<{ lang: string; slug: string }>;
 }) {
-  const resolved = await params;
-  const lang = resolved.lang === 'en' ? 'en' : 'ko';
-  const slug = resolved.slug;
+  const { lang, slug } = await params;
   const isEn = lang === 'en';
 
-  let config: TestConfig | undefined;
-
-  if (slug === 'career-power') {
-    config = isEn ? careerPowerEnTest : careerPowerTest;
-  } else if (slug === 'spending-dna') {
-    config = spendingDnaTest;
+  if (slug !== 'career-power') {
+    return notFound();
   }
 
-  if (!config) return notFound();
+  const activeConfig = isEn ? careerPowerEnTest : careerPowerTest;
 
   return (
     <main className="min-h-screen bg-slate-950 text-white selection:bg-indigo-500 flex flex-col justify-between">
@@ -48,17 +42,17 @@ export default async function LocalizedTestPage({
         <div className="py-12 px-4 flex flex-col items-center justify-center">
           <div className="text-center mb-8 max-w-md w-full">
             <span className="text-xs text-indigo-400 font-bold uppercase tracking-wider">
-              {config.category}
+              {activeConfig.category}
             </span>
             <h1 className="text-3xl font-black mt-1 mb-2">
-              {config.title}
+              {activeConfig.title}
             </h1>
             <p className="text-slate-400 text-sm">
-              {config.description}
+              {activeConfig.description}
             </p>
           </div>
 
-          <TestRunner config={config} lang={lang} />
+          <TestRunner key={`${slug}-${lang}`} config={activeConfig} lang={isEn ? 'en' : 'ko'} />
         </div>
       </div>
 
