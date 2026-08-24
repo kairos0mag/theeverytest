@@ -1,7 +1,7 @@
 import { getDictionary } from '@/lib/i18n';
 import { getTestList } from '@/config/tests';
 import Link from 'next/link';
-import { Sparkles, ArrowRight, TrendingUp, Compass, Heart, Briefcase, Smile } from 'lucide-react';
+import { Sparkles, ArrowRight, TrendingUp, Compass, Heart, Briefcase, Smile, Cpu } from 'lucide-react';
 
 export default async function LangPage({ params }: { params: Promise<{ lang: string }> }) {
   const resolvedParams = await params;
@@ -9,11 +9,9 @@ export default async function LangPage({ params }: { params: Promise<{ lang: str
   const dict = await getDictionary(lang);
   const tests = getTestList(lang);
 
-  // 인기 테스트(Featured) 분리
   const featuredTests = tests.filter((t) => t.isFeatured);
   const otherTests = tests.filter((t) => !t.isFeatured);
 
-  // 카테고리 이름 매핑
   const categoryNames: Record<string, { ko: string; en: string; icon: any }> = {
     career: { ko: '직장·커리어', en: 'Career & Work', icon: Briefcase },
     personality: { ko: '성향·심리', en: 'Personality', icon: Compass },
@@ -24,7 +22,6 @@ export default async function LangPage({ params }: { params: Promise<{ lang: str
   return (
     <main className="min-h-screen bg-slate-950 text-white selection:bg-indigo-500 flex flex-col justify-between">
       <div>
-        {/* 상단 헤더 */}
         <header className="border-b border-slate-900 sticky top-0 bg-slate-950/80 backdrop-blur-md z-50">
           <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
             <Link href={`/${lang}`} className="flex items-center gap-2 font-black text-xl tracking-tight text-indigo-400">
@@ -32,7 +29,6 @@ export default async function LangPage({ params }: { params: Promise<{ lang: str
               <span>TheEveryTest</span>
             </Link>
             
-            {/* 언어 스위처 */}
             <div className="flex items-center gap-1.5 text-xs bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-full">
               <Link
                 href="/ko"
@@ -55,7 +51,6 @@ export default async function LangPage({ params }: { params: Promise<{ lang: str
           </div>
         </header>
 
-        {/* 히어로 영역 */}
         <section className="max-w-4xl mx-auto px-4 pt-16 pb-10 text-center">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-950/60 border border-indigo-800/60 text-indigo-300 text-xs font-semibold mb-6">
             <TrendingUp className="w-3.5 h-3.5" />
@@ -69,7 +64,7 @@ export default async function LangPage({ params }: { params: Promise<{ lang: str
           </p>
         </section>
 
-        {/* 1. 인기 테스트 섹션 (맨 위 강조 배치) */}
+        {/* 인기 테스트 섹션 */}
         {featuredTests.length > 0 && (
           <section className="max-w-4xl mx-auto px-4 pb-12">
             <div className="flex items-center gap-2 mb-4">
@@ -91,6 +86,11 @@ export default async function LangPage({ params }: { params: Promise<{ lang: str
                       <span className="text-[11px] font-bold uppercase tracking-wider text-indigo-300 bg-indigo-900/60 border border-indigo-700/50 px-2.5 py-0.5 rounded-md">
                         {categoryNames[test.category]?.[lang] || test.category}
                       </span>
+                      {test.isAiPowered && (
+                        <span className="inline-flex items-center gap-1 text-[11px] font-bold text-cyan-300 bg-cyan-950/80 border border-cyan-800/60 px-2 py-0.5 rounded-md">
+                          <Cpu className="w-3 h-3" /> AI Engine
+                        </span>
+                      )}
                       <span className="text-xs text-slate-400 font-medium">
                         {lang === 'en' ? `${test.questionCount} Questions` : `${test.questionCount}문항`}
                       </span>
@@ -113,7 +113,7 @@ export default async function LangPage({ params }: { params: Promise<{ lang: str
           </section>
         )}
 
-        {/* 2. 카테고리별 전체 테스트 목록 */}
+        {/* 카테고리별 전체 테스트 목록 */}
         <section className="max-w-4xl mx-auto px-4 pb-20">
           <h2 className="text-lg font-bold text-slate-200 mb-6">{dict.home.popular}</h2>
 
@@ -130,10 +130,17 @@ export default async function LangPage({ params }: { params: Promise<{ lang: str
                 >
                   <div>
                     <div className="flex items-center justify-between mb-3">
-                      <span className="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-slate-300 bg-slate-800 border border-slate-700 px-2.5 py-0.5 rounded-md">
-                        <CatIcon className="w-3 h-3 text-indigo-400" />
-                        {catInfo?.[lang] || test.category}
-                      </span>
+                      <div className="flex items-center gap-1.5">
+                        <span className="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-slate-300 bg-slate-800 border border-slate-700 px-2.5 py-0.5 rounded-md">
+                          <CatIcon className="w-3 h-3 text-indigo-400" />
+                          {catInfo?.[lang] || test.category}
+                        </span>
+                        {test.isAiPowered && (
+                          <span className="inline-flex items-center gap-1 text-[10px] font-bold text-cyan-300 bg-cyan-950/80 border border-cyan-800/60 px-2 py-0.5 rounded-md">
+                            <Cpu className="w-3 h-3" /> AI
+                          </span>
+                        )}
+                      </div>
                       <span className="text-xs text-slate-500 font-medium">
                         {lang === 'en' ? `${test.questionCount} Questions` : `${test.questionCount}문항`}
                       </span>
@@ -157,7 +164,6 @@ export default async function LangPage({ params }: { params: Promise<{ lang: str
         </section>
       </div>
 
-      {/* 푸터 */}
       <footer className="border-t border-slate-900 bg-slate-950 py-8 text-center text-xs text-slate-600">
         <div className="max-w-4xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p>© 2026 TheEveryTest. All rights reserved.</p>
