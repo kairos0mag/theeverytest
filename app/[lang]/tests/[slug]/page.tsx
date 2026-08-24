@@ -1,4 +1,4 @@
-import { testRegistry } from '@/config/tests';
+import { getTestConfig } from '@/config/tests';
 import { TestRunner } from '@/components/engine/TestRunner';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
@@ -11,7 +11,7 @@ export default async function LocalizedTestPage({
 }) {
   const { lang, slug } = await params;
   const isEn = lang === 'en';
-  const config = testRegistry[slug];
+  const config = getTestConfig(slug, isEn ? 'en' : 'ko');
   if (!config) return notFound();
 
   return (
@@ -39,14 +39,10 @@ export default async function LocalizedTestPage({
               {config.category}
             </span>
             <h1 className="text-3xl font-black mt-1 mb-2">
-              {isEn && slug === 'career-power'
-                ? 'AI Workplace Combat & Burnout Test'
-                : config.title}
+              {config.title}
             </h1>
             <p className="text-slate-400 text-sm">
-              {isEn && slug === 'career-power'
-                ? 'Analyze your 10 workplace survival personas with 20 questions.'
-                : config.description}
+              {config.description}
             </p>
           </div>
 
