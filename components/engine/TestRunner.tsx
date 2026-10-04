@@ -40,27 +40,28 @@ export function TestRunner({
   const progressPercent = ((currentStep + 1) / config.questions.length) * 100;
 
   return (
-    <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl">
-      <div className="w-full bg-slate-800/80 h-2 rounded-full mb-8 overflow-hidden">
+    <div className="w-full max-w-md bg-white border-2 border-slate-900 rounded-3xl p-6 shadow-[4px_4px_0px_0px_rgba(15,23,42,1)]">
+      {/* 프로그레스 바 */}
+      <div className="w-full bg-slate-100 h-2.5 rounded-full mb-6 overflow-hidden border border-slate-200">
         <div
-          className="bg-indigo-500 h-full transition-all duration-300 ease-out rounded-full"
+          className="bg-orange-500 h-full transition-all duration-300 ease-out rounded-full"
           style={{ width: `${progressPercent}%` }}
         />
       </div>
 
-      <div className="mb-8">
-        <span className="text-xs font-bold text-indigo-400">
-          Q{q.id} / {config.questions.length}
+      <div className="mb-6">
+        <span className="text-[11px] font-extrabold text-orange-600 uppercase tracking-wider">
+          QUESTION {q.id} / {config.questions.length}
         </span>
-        <h2 className="text-xl font-black text-white mt-1 leading-snug">{q.question}</h2>
+        <h2 className="text-lg sm:text-xl font-black text-slate-900 mt-1 leading-snug">{q.question}</h2>
       </div>
 
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-2.5">
         {q.options.map((opt, idx) => (
           <button
             key={idx}
             onClick={() => handleSelect(opt)}
-            className="w-full text-left p-4 rounded-2xl bg-slate-950/60 hover:bg-indigo-600/20 border border-slate-800 hover:border-indigo-500 text-slate-200 text-sm font-medium transition active:scale-[0.98]"
+            className="w-full text-left p-4 rounded-2xl bg-slate-50 hover:bg-orange-50/50 border border-slate-200 hover:border-orange-500 text-slate-800 hover:text-slate-900 text-xs sm:text-sm font-semibold transition active:scale-[0.98]"
           >
             {opt.text}
           </button>

@@ -1,7 +1,7 @@
 import { getDictionary } from '@/lib/i18n';
 import { getTestList } from '@/config/tests';
 import Link from 'next/link';
-import { Sparkles, ArrowRight, TrendingUp, Compass, Heart, Briefcase, Smile, Cpu } from 'lucide-react';
+import { ArrowRight, Compass, Heart, Briefcase, Smile, Zap } from 'lucide-react';
 
 export default async function LangPage({ params }: { params: Promise<{ lang: string }> }) {
   const resolvedParams = await params;
@@ -9,40 +9,39 @@ export default async function LangPage({ params }: { params: Promise<{ lang: str
   const dict = await getDictionary(lang);
   const tests = getTestList(lang);
 
-  const featuredTests = tests.filter((t) => t.isFeatured);
-  const otherTests = tests.filter((t) => !t.isFeatured);
+  const featuredTest = tests.find((t) => t.isFeatured) || tests[0];
 
-  const categoryNames: Record<string, { ko: string; en: string; icon: any }> = {
-    career: { ko: '직장·커리어', en: 'Career & Work', icon: Briefcase },
-    personality: { ko: '성향·심리', en: 'Personality', icon: Compass },
-    love: { ko: '연애·관계', en: 'Love & Dating', icon: Heart },
-    fun: { ko: '재미·유머', en: 'Fun & Viral', icon: Smile },
+  const categoryNames: Record<string, { ko: string; en: string; icon: any; color: string }> = {
+    career: { ko: '직장·커리어', en: 'Career', icon: Briefcase, color: 'bg-blue-50 text-blue-700 border-blue-200' },
+    personality: { ko: '성향·소비', en: 'Mind & Money', icon: Compass, color: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
+    love: { ko: '연애·관계', en: 'Love & Dating', icon: Heart, color: 'bg-rose-50 text-rose-700 border-rose-200' },
+    fun: { ko: '재미·심리', en: 'Fun & Viral', icon: Smile, color: 'bg-amber-50 text-amber-700 border-amber-200' },
   };
 
   return (
-    <main className="min-h-screen bg-slate-950 text-white selection:bg-indigo-500 flex flex-col justify-between">
+    <main className="min-h-screen bg-[#F8F9FA] text-slate-900 flex flex-col justify-between">
       <div>
-        <header className="border-b border-slate-900 sticky top-0 bg-slate-950/80 backdrop-blur-md z-50">
-          <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
-            <Link href={`/${lang}`} className="flex items-center gap-2 font-black text-xl tracking-tight text-indigo-400">
-              <Sparkles className="w-5 h-5 text-indigo-400" />
-              <span>TheEveryTest</span>
+        {/* 헤더 */}
+        <header className="border-b border-slate-200 sticky top-0 bg-white/90 backdrop-blur-md z-50">
+          <div className="max-w-3xl mx-auto px-4 h-14 flex items-center justify-between">
+            <Link href={`/${lang}`} className="font-black text-xl tracking-tight text-slate-900 flex items-center gap-1.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-orange-500 inline-block"></span>
+              TheEveryTest
             </Link>
             
-            <div className="flex items-center gap-1.5 text-xs bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-full">
+            <div className="flex items-center gap-1 text-xs bg-slate-100 border border-slate-200 p-1 rounded-full font-bold">
               <Link
                 href="/ko"
-                className={`transition px-2 py-0.5 rounded ${
-                  lang === 'ko' ? 'bg-indigo-600 text-white font-bold' : 'text-slate-400 hover:text-slate-200'
+                className={`px-2.5 py-0.5 rounded-full transition ${
+                  lang === 'ko' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-900'
                 }`}
               >
                 KO
               </Link>
-              <span className="text-slate-700">|</span>
               <Link
                 href="/en"
-                className={`transition px-2 py-0.5 rounded ${
-                  lang === 'en' ? 'bg-indigo-600 text-white font-bold' : 'text-slate-400 hover:text-slate-200'
+                className={`px-2.5 py-0.5 rounded-full transition ${
+                  lang === 'en' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-900'
                 }`}
               >
                 EN
@@ -51,73 +50,64 @@ export default async function LangPage({ params }: { params: Promise<{ lang: str
           </div>
         </header>
 
-        <section className="max-w-4xl mx-auto px-4 pt-16 pb-10 text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-950/60 border border-indigo-800/60 text-indigo-300 text-xs font-semibold mb-6">
-            <TrendingUp className="w-3.5 h-3.5" />
-            <span>{lang === 'en' ? 'New AI Personality Tests Every Week' : '매주 새로운 AI 성향 테스트 업데이트'}</span>
-          </div>
-          <h1 className="text-4xl sm:text-5xl font-black tracking-tight mb-4 text-slate-100">
-            {dict.home.title}
+        {/* 메인 히어로 타이틀 */}
+        <section className="max-w-3xl mx-auto px-4 pt-10 pb-6 text-center">
+          <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-slate-950 mb-2">
+            {lang === 'en' ? 'Discover Your True Archetype' : '나를 발견하는 확실한 진단'}
           </h1>
-          <p className="text-slate-400 text-sm sm:text-base max-w-lg mx-auto leading-relaxed">
-            {dict.home.subtitle}
+          <p className="text-slate-600 text-xs sm:text-sm max-w-md mx-auto">
+            {lang === 'en' ? 'Fun, fast, and psychologically validated interactive tests.' : '직장, 연애, 소비 성향까지 가장 빠르고 정확하게 분석해보세요.'}
           </p>
         </section>
 
-        {/* 인기 테스트 섹션 */}
-        {featuredTests.length > 0 && (
-          <section className="max-w-4xl mx-auto px-4 pb-12">
-            <div className="flex items-center gap-2 mb-4">
-              <TrendingUp className="w-4 h-4 text-indigo-400" />
-              <h2 className="text-sm font-bold uppercase tracking-wider text-indigo-400">
-                {lang === 'en' ? 'Trending & Featured' : '🔥 실시간 인기 테스트'}
-              </h2>
+        {/* 상단 추천 테스트 (Featured Banner) */}
+        {featuredTest && (
+          <section className="max-w-3xl mx-auto px-4 pb-8">
+            <div className="flex items-center gap-1.5 mb-2.5">
+              <Zap className="w-4 h-4 text-orange-500 fill-orange-500" />
+              <span className="text-xs font-bold uppercase tracking-wider text-orange-600">
+                {lang === 'en' ? 'Most Viral Right Now' : '지금 가장 인기 있는 테스트'}
+              </span>
             </div>
 
-            <div className="grid grid-cols-1 gap-4">
-              {featuredTests.map((test) => (
-                <Link
-                  key={test.slug}
-                  href={`/${lang}/tests/${test.slug}`}
-                  className="group relative bg-gradient-to-r from-indigo-950/40 via-slate-900 to-slate-900 hover:from-indigo-900/40 border border-indigo-500/30 hover:border-indigo-500 rounded-3xl p-6 sm:p-8 transition-all duration-200 hover:-translate-y-1 hover:shadow-2xl hover:shadow-indigo-500/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6"
-                >
-                  <div>
-                    <div className="flex items-center gap-2 mb-3">
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-indigo-300 bg-indigo-900/60 border border-indigo-700/50 px-2.5 py-0.5 rounded-md">
-                        {categoryNames[test.category]?.[lang] || test.category}
-                      </span>
-                      {test.isAiPowered && (
-                        <span className="inline-flex items-center gap-1 text-[11px] font-bold text-cyan-300 bg-cyan-950/80 border border-cyan-800/60 px-2 py-0.5 rounded-md">
-                          <Cpu className="w-3 h-3" /> AI Engine
-                        </span>
-                      )}
-                      <span className="text-xs text-slate-400 font-medium">
-                        {lang === 'en' ? `${test.questionCount} Questions` : `${test.questionCount}문항`}
-                      </span>
-                    </div>
-                    <h3 className="text-xl sm:text-2xl font-black text-slate-100 group-hover:text-indigo-300 transition-colors mb-2">
-                      {test.title}
-                    </h3>
-                    <p className="text-slate-400 text-xs sm:text-sm leading-relaxed max-w-xl">
-                      {test.description}
-                    </p>
+            <Link
+              href={`/${lang}/tests/${featuredTest.slug}`}
+              className="block group bg-white border-2 border-slate-900 rounded-2xl p-6 sm:p-7 shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] hover:shadow-[1px_1px_0px_0px_rgba(15,23,42,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
+            >
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-orange-100 text-orange-800">
+                      {categoryNames[featuredTest.category]?.[lang] || featuredTest.category}
+                    </span>
+                    <span className="text-xs text-slate-500 font-semibold">
+                      {featuredTest.questionCount} {lang === 'en' ? 'Questions' : '문항'}
+                    </span>
                   </div>
+                  <h2 className="text-xl sm:text-2xl font-black text-slate-900 group-hover:text-orange-600 transition-colors mb-1.5">
+                    {featuredTest.title}
+                  </h2>
+                  <p className="text-slate-600 text-xs sm:text-sm max-w-xl">
+                    {featuredTest.description}
+                  </p>
+                </div>
 
-                  <div className="flex items-center gap-2 bg-indigo-600 group-hover:bg-indigo-500 text-white px-5 py-3 rounded-2xl text-xs font-bold transition whitespace-nowrap self-stretch sm:self-auto justify-center">
-                    <span>{dict.home.start}</span>
-                    <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
-                  </div>
-                </Link>
-              ))}
-            </div>
+                <div className="bg-slate-900 group-hover:bg-orange-600 text-white font-bold text-xs px-5 py-3 rounded-xl flex items-center gap-1.5 self-stretch sm:self-auto justify-center transition-colors">
+                  <span>{dict.home.start}</span>
+                  <ArrowRight size={14} />
+                </div>
+              </div>
+            </Link>
           </section>
         )}
 
-        {/* 카테고리별 전체 테스트 목록 */}
-        <section className="max-w-4xl mx-auto px-4 pb-20">
-          <h2 className="text-lg font-bold text-slate-200 mb-6">{dict.home.popular}</h2>
+        {/* 전체 테스트 카드 그리드 */}
+        <section className="max-w-3xl mx-auto px-4 pb-16">
+          <h3 className="text-base font-bold text-slate-900 mb-3">
+            {lang === 'en' ? 'All Tests' : '전체 테스트'}
+          </h3>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             {tests.map((test) => {
               const catInfo = categoryNames[test.category];
               const CatIcon = catInfo?.icon || Compass;
@@ -126,36 +116,29 @@ export default async function LangPage({ params }: { params: Promise<{ lang: str
                 <Link
                   key={test.slug}
                   href={`/${lang}/tests/${test.slug}`}
-                  className="group relative bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-indigo-500/50 rounded-3xl p-6 transition-all duration-200 hover:-translate-y-1 hover:shadow-xl hover:shadow-indigo-500/5 flex flex-col justify-between"
+                  className="group bg-white border border-slate-200 hover:border-slate-900 rounded-2xl p-5 shadow-sm hover:shadow-[3px_3px_0px_0px_rgba(15,23,42,1)] hover:-translate-x-[1px] hover:-translate-y-[1px] transition-all flex flex-col justify-between"
                 >
                   <div>
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-1.5">
-                        <span className="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-slate-300 bg-slate-800 border border-slate-700 px-2.5 py-0.5 rounded-md">
-                          <CatIcon className="w-3 h-3 text-indigo-400" />
-                          {catInfo?.[lang] || test.category}
-                        </span>
-                        {test.isAiPowered && (
-                          <span className="inline-flex items-center gap-1 text-[10px] font-bold text-cyan-300 bg-cyan-950/80 border border-cyan-800/60 px-2 py-0.5 rounded-md">
-                            <Cpu className="w-3 h-3" /> AI
-                          </span>
-                        )}
-                      </div>
-                      <span className="text-xs text-slate-500 font-medium">
-                        {lang === 'en' ? `${test.questionCount} Questions` : `${test.questionCount}문항`}
+                    <div className="flex items-center justify-between mb-2">
+                      <span className={`inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-md border ${catInfo?.color}`}>
+                        <CatIcon className="w-3 h-3" />
+                        {catInfo?.[lang] || test.category}
+                      </span>
+                      <span className="text-[11px] text-slate-400 font-semibold">
+                        {test.questionCount} {lang === 'en' ? 'Q' : '문항'}
                       </span>
                     </div>
-                    <h3 className="text-lg font-bold text-slate-100 group-hover:text-indigo-300 transition-colors mb-2">
+                    <h4 className="text-base font-extrabold text-slate-900 group-hover:text-orange-600 transition-colors mb-1">
                       {test.title}
-                    </h3>
-                    <p className="text-slate-400 text-xs leading-relaxed line-clamp-2 mb-6">
+                    </h4>
+                    <p className="text-slate-500 text-xs line-clamp-2 leading-relaxed mb-4">
                       {test.description}
                     </p>
                   </div>
 
-                  <div className="flex items-center justify-between pt-4 border-t border-slate-800/60 text-xs font-semibold text-slate-300 group-hover:text-indigo-400 transition-colors">
+                  <div className="flex items-center justify-between pt-3 border-t border-slate-100 text-xs font-bold text-slate-800 group-hover:text-orange-600 transition-colors">
                     <span>{dict.home.start}</span>
-                    <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
+                    <ArrowRight size={13} className="transform group-hover:translate-x-1 transition-transform" />
                   </div>
                 </Link>
               );
@@ -164,23 +147,20 @@ export default async function LangPage({ params }: { params: Promise<{ lang: str
         </section>
       </div>
 
-      <footer className="border-t border-slate-900 bg-slate-950 py-8 text-center text-xs text-slate-600">
-        <div className="max-w-4xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+      {/* 푸터 */}
+      <footer className="border-t border-slate-200 bg-white py-6 text-center text-xs text-slate-500">
+        <div className="max-w-3xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p>© 2026 TheEveryTest. All rights reserved.</p>
-          <div className="flex gap-4 text-slate-500">
-            <Link href={`/${lang}/privacy`} className="hover:text-slate-300 transition">
-              {isEnLike(lang) ? 'Privacy Policy' : '개인정보처리방침'}
+          <div className="flex gap-4 text-slate-500 font-medium">
+            <Link href={`/${lang}/privacy`} className="hover:text-slate-800 transition">
+              {lang === 'en' ? 'Privacy Policy' : '개인정보처리방침'}
             </Link>
-            <Link href={`/${lang}/terms`} className="hover:text-slate-300 transition">
-              {isEnLike(lang) ? 'Terms of Service' : '이용약관'}
+            <Link href={`/${lang}/terms`} className="hover:text-slate-800 transition">
+              {lang === 'en' ? 'Terms of Service' : '이용약관'}
             </Link>
           </div>
         </div>
       </footer>
     </main>
   );
-}
-
-function isEnLike(lang: string) {
-  return lang === 'en';
 }

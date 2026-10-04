@@ -11,7 +11,7 @@ export interface Question {
 }
 
 export interface TestResult {
-  code: string;
+  code?: string;
   title: string;
   subtitle: string;
   description: string;
@@ -24,9 +24,9 @@ export interface TestConfig {
   slug: string;
   title: string;
   description: string;
-  category: 'viral' | 'career' | 'beauty' | 'finance';
-  isDataCollection: boolean;
+  category: 'career' | 'personality' | 'love' | 'fun' | 'viral' | 'beauty' | 'finance';
+  isDataCollection?: boolean;
   questions: Question[];
   results: Record<string, TestResult>;
-  seoArticle: string;
+  seoArticle?: string;
 }

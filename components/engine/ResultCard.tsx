@@ -27,53 +27,53 @@ export function ResultCard({
   };
 
   return (
-    <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl text-center flex flex-col items-center">
-      <span className="text-xs font-bold text-indigo-400 uppercase tracking-widest mb-1">
-        {isEn ? 'TEST RESULT' : '진단 결과'}
+    <div className="w-full max-w-md bg-white border-2 border-slate-900 rounded-3xl p-6 sm:p-7 shadow-[5px_5px_0px_0px_rgba(15,23,42,1)] text-center flex flex-col items-center">
+      <span className="text-[11px] font-extrabold text-orange-600 uppercase tracking-widest mb-1.5">
+        {isEn ? 'DIAGNOSIS RESULT' : '나의 분석 결과'}
       </span>
-      <h2 className="text-2xl font-black text-white mb-1">{result.title}</h2>
-      <p className="text-sm font-medium text-slate-400 mb-6">{result.subtitle}</p>
+      <h2 className="text-2xl font-black text-slate-900 mb-1 leading-tight">{result.title}</h2>
+      <p className="text-xs font-semibold text-slate-500 mb-5">{result.subtitle}</p>
 
-      <div className="w-full bg-slate-950/60 border border-slate-800/80 rounded-2xl p-5 mb-6 text-left">
-        <p className="text-sm text-slate-300 leading-relaxed">{result.description}</p>
+      <div className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 mb-5 text-left">
+        <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">{result.description}</p>
       </div>
 
-      <div className="flex flex-wrap justify-center gap-2 mb-6">
+      <div className="flex flex-wrap justify-center gap-1.5 mb-5">
         {result.tags.map((tag, idx) => (
           <span
             key={idx}
-            className="text-xs bg-indigo-950/60 text-indigo-300 border border-indigo-800/50 px-3 py-1 rounded-full font-medium"
+            className="text-[11px] bg-slate-100 text-slate-700 border border-slate-200 px-2.5 py-1 rounded-lg font-bold"
           >
             {tag}
           </span>
         ))}
       </div>
 
-      <div className="w-full grid grid-cols-2 gap-3 mb-6 text-left text-xs">
-        <div className="bg-slate-950/40 border border-slate-800 p-3 rounded-xl">
-          <p className="text-emerald-400 font-bold mb-1">{isEn ? 'Best Synergy' : '환상의 케미'}</p>
-          <p className="text-slate-300 font-medium">{result.bestMatch}</p>
+      <div className="w-full grid grid-cols-2 gap-2.5 mb-6 text-left text-xs">
+        <div className="bg-emerald-50/70 border border-emerald-200 p-3 rounded-xl">
+          <p className="text-emerald-700 font-extrabold mb-1">{isEn ? 'Best Chemistry' : '환상의 케미'}</p>
+          <p className="text-slate-800 font-semibold text-[11px] leading-tight">{result.bestMatch}</p>
         </div>
-        <div className="bg-slate-950/40 border border-slate-800 p-3 rounded-xl">
-          <p className="text-rose-400 font-bold mb-1">{isEn ? 'Worst Friction' : '환장의 케미'}</p>
-          <p className="text-slate-300 font-medium">{result.worstMatch}</p>
+        <div className="bg-rose-50/70 border border-rose-200 p-3 rounded-xl">
+          <p className="text-rose-700 font-extrabold mb-1">{isEn ? 'Worst Chemistry' : '환장의 케미'}</p>
+          <p className="text-slate-800 font-semibold text-[11px] leading-tight">{result.worstMatch}</p>
         </div>
       </div>
 
-      <div className="w-full flex gap-3">
+      <div className="w-full flex gap-2.5">
         <button
           onClick={handleCopyLink}
-          className="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm transition"
+          className="flex-1 flex items-center justify-center gap-1.5 py-3 px-4 rounded-xl bg-slate-900 hover:bg-orange-600 text-white font-bold text-xs sm:text-sm transition active:scale-[0.98]"
         >
-          <Share2 size={16} />
-          {copied ? (isEn ? 'Link Copied!' : '링크 복사됨!') : (isEn ? 'Share Result' : '결과 공유하기')}
+          <Share2 size={15} />
+          {copied ? (isEn ? 'Link Copied!' : '링크 복사 완료!') : (isEn ? 'Share Result' : '결과 공유하기')}
         </button>
         <button
           onClick={handleRestart}
-          className="flex items-center justify-center p-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition"
+          className="flex items-center justify-center p-3 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-700 transition"
           title={isEn ? 'Retake' : '다시 하기'}
         >
-          <RotateCcw size={18} />
+          <RotateCcw size={16} />
         </button>
       </div>
     </div>
