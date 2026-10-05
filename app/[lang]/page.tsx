@@ -1,17 +1,17 @@
-'use client';
+"use client";
 
-import { useState, useMemo } from 'react';
-import Link from 'next/link';
-import { useParams } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useMemo } from "react";
+import Link from "next/link";
+import { useParams } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
 import { 
   Briefcase, HeartHandshake, Sparkles, Zap, Cpu, 
   Search, ArrowRight, ShieldCheck, Layers 
-} from 'lucide-react';
-import { TOOLS_REGISTRY } from '@/lib/tools-registry';
-import { ToolCategory } from '@/types/tool';
+} from "lucide-react";
+import { TOOLS_REGISTRY } from "@/lib/tools-registry";
+import { ToolCategory } from "@/types/tool";
 
-const ICON_MAP: Record<string, any> = {
+const ICON_MAP = {
   Briefcase,
   HeartHandshake,
   Sparkles,
@@ -21,16 +21,16 @@ const ICON_MAP: Record<string, any> = {
 
 export default function PlatformHomePage() {
   const params = useParams();
-  const lang = (params?.lang as string) || 'ko';
+  const lang = (params?.lang as string) || "ko";
 
-  const [activeCategory, setActiveCategory] = useState<ToolCategory>('all');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [activeCategory, setActiveCategory] = useState<ToolCategory>("all");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const filteredTools = useMemo(() => {
     return TOOLS_REGISTRY.filter((tool) => {
-      const matchesCategory = activeCategory === 'all' || tool.category === activeCategory;
-      const title = tool.title[lang] || tool.title['ko'] || '';
-      const desc = tool.description[lang] || tool.description['ko'] || '';
+      const matchesCategory = activeCategory === "all" || tool.category === activeCategory;
+      const title = tool.title[lang] || tool.title["ko"] || "";
+      const desc = tool.description[lang] || tool.description["ko"] || "";
       const matchesSearch = 
         title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         desc.toLowerCase().includes(searchQuery.toLowerCase());
@@ -65,15 +65,20 @@ export default function PlatformHomePage() {
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-10 pb-6 border-b border-white/5">
           <div className="flex items-center gap-1.5 p-1 bg-white/5 rounded-xl border border-white/10 backdrop-blur-md w-full md:w-auto overflow-x-auto">
             {[
-              { id: 'all', label: '전체 도구' },
-              { id: 'test', label: '심리 / 성향 분석' },
-              { id: 'ai', label: 'AI 인텔리전스' },
-              { id: 'utility', label: '웹 유틸리티' },
+              { id: "all", label: "전체 도구" },
+              { id: "test", label: "심리 / 성향 분석" },
+              { id: "ai", label: "AI 인텔리전스" },
+              { id: "utility", label: "웹 유틸리티" },
             ].map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveCategory(tab.id as ToolCategory)}
-                className={}
+                className={
+                  "px-4 py-2 rounded-lg text-xs font-semibold transition-all whitespace-nowrap " +
+                  (activeCategory === tab.id
+                    ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/30"
+                    : "text-slate-400 hover:text-white hover:bg-white/5")
+                }
               >
                 {tab.label}
               </button>
@@ -98,10 +103,10 @@ export default function PlatformHomePage() {
         >
           <AnimatePresence>
             {filteredTools.map((tool) => {
-              const IconComponent = ICON_MAP[tool.icon] || Layers;
-              const title = tool.title[lang] || tool.title['ko'];
-              const description = tool.description[lang] || tool.description['ko'];
-              const isComingSoon = tool.badge === 'BETA' || tool.category === 'ai';
+              const IconComponent = (ICON_MAP as any)[tool.icon] || Layers;
+              const title = tool.title[lang] || tool.title["ko"];
+              const description = tool.description[lang] || tool.description["ko"];
+              const isComingSoon = tool.badge === "BETA" || tool.category === "ai";
 
               return (
                 <motion.div
@@ -113,7 +118,7 @@ export default function PlatformHomePage() {
                   transition={{ duration: 0.2 }}
                   className="group relative flex flex-col justify-between p-6 rounded-2xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/10 hover:border-white/20 transition-all duration-300 shadow-xl overflow-hidden"
                 >
-                  <div className={} />
+                  <div className={"absolute inset-0 bg-gradient-to-br " + tool.accentColor + " opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"} />
 
                   <div>
                     <div className="flex items-center justify-between mb-4">
@@ -121,7 +126,14 @@ export default function PlatformHomePage() {
                         <IconComponent className="w-5 h-5" />
                       </div>
                       {tool.badge && (
-                        <span className={}>
+                        <span className={
+                          "text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full border " +
+                          (tool.badge === "HOT"
+                            ? "bg-rose-500/10 border-rose-500/30 text-rose-400"
+                            : tool.badge === "AI"
+                            ? "bg-purple-500/10 border-purple-500/30 text-purple-400"
+                            : "bg-emerald-500/10 border-emerald-500/30 text-emerald-400")
+                        }>
                           {tool.badge}
                         </span>
                       )}
@@ -145,8 +157,8 @@ export default function PlatformHomePage() {
 
                   <div className="pt-4 border-t border-white/5 flex items-center justify-between mt-auto">
                     <div className="text-[11px] text-slate-500 font-medium">
-                      {tool.stats?.participants && }
-                      {tool.stats?.latency && }
+                      {tool.stats?.participants && "참여 " + tool.stats.participants}
+                      {tool.stats?.latency && "응답속도: " + tool.stats.latency}
                     </div>
 
                     {isComingSoon ? (
@@ -155,7 +167,7 @@ export default function PlatformHomePage() {
                       </span>
                     ) : (
                       <Link
-                        href={}
+                        href={"/" + lang + "/tests/" + tool.slug}
                         className="inline-flex items-center gap-1.5 text-xs font-bold text-indigo-400 group-hover:text-indigo-300 group-hover:translate-x-1 transition-all"
                       >
                         시작하기
