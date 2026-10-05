@@ -1,166 +1,184 @@
-import { getDictionary } from '@/lib/i18n';
-import { getTestList } from '@/config/tests';
+'use client';
+
+import { useState, useMemo } from 'react';
 import Link from 'next/link';
-import { ArrowRight, Compass, Heart, Briefcase, Smile, Zap } from 'lucide-react';
+import { useParams } from 'next/navigation';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  Briefcase, HeartHandshake, Sparkles, Zap, Cpu, 
+  Search, ArrowRight, ShieldCheck, Layers 
+} from 'lucide-react';
+import { TOOLS_REGISTRY } from '@/lib/tools-registry';
+import { ToolCategory } from '@/types/tool';
 
-export default async function LangPage({ params }: { params: Promise<{ lang: string }> }) {
-  const resolvedParams = await params;
-  const lang = (resolvedParams.lang === 'en' ? 'en' : 'ko') as 'ko' | 'en';
-  const dict = await getDictionary(lang);
-  const tests = getTestList(lang);
+const ICON_MAP: Record<string, any> = {
+  Briefcase,
+  HeartHandshake,
+  Sparkles,
+  Zap,
+  Cpu,
+};
 
-  const featuredTest = tests.find((t) => t.isFeatured) || tests[0];
+export default function PlatformHomePage() {
+  const params = useParams();
+  const lang = (params?.lang as string) || 'ko';
 
-  const categoryNames: Record<string, { ko: string; en: string; icon: any; color: string }> = {
-    career: { ko: '직장·커리어', en: 'Career', icon: Briefcase, color: 'bg-blue-50 text-blue-700 border-blue-200' },
-    personality: { ko: '성향·소비', en: 'Mind & Money', icon: Compass, color: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
-    love: { ko: '연애·관계', en: 'Love & Dating', icon: Heart, color: 'bg-rose-50 text-rose-700 border-rose-200' },
-    fun: { ko: '재미·심리', en: 'Fun & Viral', icon: Smile, color: 'bg-amber-50 text-amber-700 border-amber-200' },
-  };
+  const [activeCategory, setActiveCategory] = useState<ToolCategory>('all');
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredTools = useMemo(() => {
+    return TOOLS_REGISTRY.filter((tool) => {
+      const matchesCategory = activeCategory === 'all' || tool.category === activeCategory;
+      const title = tool.title[lang] || tool.title['ko'] || '';
+      const desc = tool.description[lang] || tool.description['ko'] || '';
+      const matchesSearch = 
+        title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        desc.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchesCategory && matchesSearch;
+    });
+  }, [activeCategory, searchQuery, lang]);
 
   return (
-    <main className="min-h-screen bg-[#F8F9FA] text-slate-900 flex flex-col justify-between">
-      <div>
-        {/* 헤더 */}
-        <header className="border-b border-slate-200 sticky top-0 bg-white/90 backdrop-blur-md z-50">
-          <div className="max-w-3xl mx-auto px-4 h-14 flex items-center justify-between">
-            <Link href={`/${lang}`} className="font-black text-xl tracking-tight text-slate-900 flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-orange-500 inline-block"></span>
-              TheEveryTest
-            </Link>
-            
-            <div className="flex items-center gap-1 text-xs bg-slate-100 border border-slate-200 p-1 rounded-full font-bold">
-              <Link
-                href="/ko"
-                className={`px-2.5 py-0.5 rounded-full transition ${
-                  lang === 'ko' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-900'
-                }`}
-              >
-                KO
-              </Link>
-              <Link
-                href="/en"
-                className={`px-2.5 py-0.5 rounded-full transition ${
-                  lang === 'en' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-900'
-                }`}
-              >
-                EN
-              </Link>
-            </div>
-          </div>
-        </header>
-
-        {/* 메인 히어로 타이틀 */}
-        <section className="max-w-3xl mx-auto px-4 pt-10 pb-6 text-center">
-          <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-slate-950 mb-2">
-            {lang === 'en' ? 'Discover Your True Archetype' : '나를 발견하는 확실한 진단'}
-          </h1>
-          <p className="text-slate-600 text-xs sm:text-sm max-w-md mx-auto">
-            {lang === 'en' ? 'Fun, fast, and psychologically validated interactive tests.' : '직장, 연애, 소비 성향까지 가장 빠르고 정확하게 분석해보세요.'}
-          </p>
-        </section>
-
-        {/* 상단 추천 테스트 (Featured Banner) */}
-        {featuredTest && (
-          <section className="max-w-3xl mx-auto px-4 pb-8">
-            <div className="flex items-center gap-1.5 mb-2.5">
-              <Zap className="w-4 h-4 text-orange-500 fill-orange-500" />
-              <span className="text-xs font-bold uppercase tracking-wider text-orange-600">
-                {lang === 'en' ? 'Most Viral Right Now' : '지금 가장 인기 있는 테스트'}
-              </span>
-            </div>
-
-            <Link
-              href={`/${lang}/tests/${featuredTest.slug}`}
-              className="block group bg-white border-2 border-slate-900 rounded-2xl p-6 sm:p-7 shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] hover:shadow-[1px_1px_0px_0px_rgba(15,23,42,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
-            >
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div>
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-orange-100 text-orange-800">
-                      {categoryNames[featuredTest.category]?.[lang] || featuredTest.category}
-                    </span>
-                    <span className="text-xs text-slate-500 font-semibold">
-                      {featuredTest.questionCount} {lang === 'en' ? 'Questions' : '문항'}
-                    </span>
-                  </div>
-                  <h2 className="text-xl sm:text-2xl font-black text-slate-900 group-hover:text-orange-600 transition-colors mb-1.5">
-                    {featuredTest.title}
-                  </h2>
-                  <p className="text-slate-600 text-xs sm:text-sm max-w-xl">
-                    {featuredTest.description}
-                  </p>
-                </div>
-
-                <div className="bg-slate-900 group-hover:bg-orange-600 text-white font-bold text-xs px-5 py-3 rounded-xl flex items-center gap-1.5 self-stretch sm:self-auto justify-center transition-colors">
-                  <span>{dict.home.start}</span>
-                  <ArrowRight size={14} />
-                </div>
-              </div>
-            </Link>
-          </section>
-        )}
-
-        {/* 전체 테스트 카드 그리드 */}
-        <section className="max-w-3xl mx-auto px-4 pb-16">
-          <h3 className="text-base font-bold text-slate-900 mb-3">
-            {lang === 'en' ? 'All Tests' : '전체 테스트'}
-          </h3>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-            {tests.map((test) => {
-              const catInfo = categoryNames[test.category];
-              const CatIcon = catInfo?.icon || Compass;
-
-              return (
-                <Link
-                  key={test.slug}
-                  href={`/${lang}/tests/${test.slug}`}
-                  className="group bg-white border border-slate-200 hover:border-slate-900 rounded-2xl p-5 shadow-sm hover:shadow-[3px_3px_0px_0px_rgba(15,23,42,1)] hover:-translate-x-[1px] hover:-translate-y-[1px] transition-all flex flex-col justify-between"
-                >
-                  <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <span className={`inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-md border ${catInfo?.color}`}>
-                        <CatIcon className="w-3 h-3" />
-                        {catInfo?.[lang] || test.category}
-                      </span>
-                      <span className="text-[11px] text-slate-400 font-semibold">
-                        {test.questionCount} {lang === 'en' ? 'Q' : '문항'}
-                      </span>
-                    </div>
-                    <h4 className="text-base font-extrabold text-slate-900 group-hover:text-orange-600 transition-colors mb-1">
-                      {test.title}
-                    </h4>
-                    <p className="text-slate-500 text-xs line-clamp-2 leading-relaxed mb-4">
-                      {test.description}
-                    </p>
-                  </div>
-
-                  <div className="flex items-center justify-between pt-3 border-t border-slate-100 text-xs font-bold text-slate-800 group-hover:text-orange-600 transition-colors">
-                    <span>{dict.home.start}</span>
-                    <ArrowRight size={13} className="transform group-hover:translate-x-1 transition-transform" />
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-        </section>
+    <div className="min-h-screen bg-[#090A0F] text-slate-100 antialiased selection:bg-indigo-500 selection:text-white">
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-gradient-to-b from-indigo-600/15 via-purple-600/10 to-transparent blur-3xl rounded-full" />
       </div>
 
-      {/* 푸터 */}
-      <footer className="border-t border-slate-200 bg-white py-6 text-center text-xs text-slate-500">
-        <div className="max-w-3xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p>© 2026 TheEveryTest. All rights reserved.</p>
-          <div className="flex gap-4 text-slate-500 font-medium">
-            <Link href={`/${lang}/privacy`} className="hover:text-slate-800 transition">
-              {lang === 'en' ? 'Privacy Policy' : '개인정보처리방침'}
-            </Link>
-            <Link href={`/${lang}/terms`} className="hover:text-slate-800 transition">
-              {lang === 'en' ? 'Terms of Service' : '이용약관'}
-            </Link>
+      <div className="relative max-w-6xl mx-auto px-4 sm:px-6 pt-12 pb-24">
+        <header className="text-center max-w-2xl mx-auto mb-12">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-semibold text-indigo-400 mb-6 backdrop-blur-md">
+            <span className="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+            EveryTest Open Utility Workspace
+          </div>
+
+          <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-white mb-4 leading-tight">
+            성향 분석부터 <br className="sm:hidden" />
+            <span className="bg-gradient-to-r from-indigo-400 via-purple-300 to-pink-400 bg-clip-text text-transparent">
+              AI 오픈 툴까지 한번에
+            </span>
+          </h1>
+          <p className="text-sm sm:text-base text-slate-400 leading-relaxed">
+            검증된 알고리즘과 인터랙티브 툴로 나만의 데이터를 탐색하세요.
+          </p>
+        </header>
+
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-10 pb-6 border-b border-white/5">
+          <div className="flex items-center gap-1.5 p-1 bg-white/5 rounded-xl border border-white/10 backdrop-blur-md w-full md:w-auto overflow-x-auto">
+            {[
+              { id: 'all', label: '전체 도구' },
+              { id: 'test', label: '심리 / 성향 분석' },
+              { id: 'ai', label: 'AI 인텔리전스' },
+              { id: 'utility', label: '웹 유틸리티' },
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveCategory(tab.id as ToolCategory)}
+                className={}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          <div className="relative w-full md:w-72">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="도구 및 테스트 검색..."
+              className="w-full pl-10 pr-4 py-2 bg-white/5 border border-white/10 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500/80 transition-all"
+            />
           </div>
         </div>
-      </footer>
-    </main>
+
+        <motion.div 
+          layout
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
+        >
+          <AnimatePresence>
+            {filteredTools.map((tool) => {
+              const IconComponent = ICON_MAP[tool.icon] || Layers;
+              const title = tool.title[lang] || tool.title['ko'];
+              const description = tool.description[lang] || tool.description['ko'];
+              const isComingSoon = tool.badge === 'BETA' || tool.category === 'ai';
+
+              return (
+                <motion.div
+                  key={tool.id}
+                  layout
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.2 }}
+                  className="group relative flex flex-col justify-between p-6 rounded-2xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/10 hover:border-white/20 transition-all duration-300 shadow-xl overflow-hidden"
+                >
+                  <div className={} />
+
+                  <div>
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="p-3 rounded-xl bg-white/5 border border-white/10 text-white group-hover:scale-105 group-hover:bg-indigo-600 transition-all duration-300">
+                        <IconComponent className="w-5 h-5" />
+                      </div>
+                      {tool.badge && (
+                        <span className={}>
+                          {tool.badge}
+                        </span>
+                      )}
+                    </div>
+
+                    <h3 className="text-lg font-bold text-white mb-2 group-hover:text-indigo-300 transition-colors">
+                      {title}
+                    </h3>
+                    <p className="text-xs text-slate-400 leading-relaxed mb-6">
+                      {description}
+                    </p>
+
+                    <div className="flex flex-wrap gap-1.5 mb-6">
+                      {tool.features.map((feat, i) => (
+                        <span key={i} className="text-[11px] px-2 py-0.5 rounded-md bg-white/5 text-slate-300 border border-white/5">
+                          #{feat}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="pt-4 border-t border-white/5 flex items-center justify-between mt-auto">
+                    <div className="text-[11px] text-slate-500 font-medium">
+                      {tool.stats?.participants && }
+                      {tool.stats?.latency && }
+                    </div>
+
+                    {isComingSoon ? (
+                      <span className="text-xs text-slate-500 font-medium px-3 py-1.5 rounded-lg bg-white/5 cursor-not-allowed">
+                        준비중
+                      </span>
+                    ) : (
+                      <Link
+                        href={}
+                        className="inline-flex items-center gap-1.5 text-xs font-bold text-indigo-400 group-hover:text-indigo-300 group-hover:translate-x-1 transition-all"
+                      >
+                        시작하기
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </Link>
+                    )}
+                  </div>
+                </motion.div>
+              );
+            })}
+          </AnimatePresence>
+        </motion.div>
+
+        <footer className="mt-20 p-6 rounded-2xl bg-white/[0.02] border border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+          <div className="flex items-center gap-2">
+            <ShieldCheck className="w-4 h-4 text-emerald-400" />
+            <span>무상태(Stateless) 프라이버시 보호 구조 | 사용자 데이터는 안전하게 처리됩니다.</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <span>© 2026 theeverytest.com</span>
+          </div>
+        </footer>
+      </div>
+    </div>
   );
 }
